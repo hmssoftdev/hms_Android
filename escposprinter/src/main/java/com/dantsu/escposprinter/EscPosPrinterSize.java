@@ -1,7 +1,10 @@
 package com.dantsu.escposprinter;
 
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+
+import androidx.core.content.res.ResourcesCompat;
 
 public abstract class EscPosPrinterSize {
 
@@ -108,4 +111,6 @@ public abstract class EscPosPrinterSize {
 
         return EscPosPrinterCommands.bitmapToBytes(bitmap);
     }
+
+    public abstract ResourcesCompat getResources();
 }
