@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
-//        webView.addJavascriptInterface(new WebAppInterface2(this), "jsinterface");
+//        webView.addJavascriptInterface(new WebAppInterface(this), "jsinterface");
         webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
 //        webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
         webView.setWebViewClient(new MyWebViewClient());

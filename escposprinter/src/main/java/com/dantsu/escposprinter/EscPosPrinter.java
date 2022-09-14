@@ -1,5 +1,7 @@
 package com.dantsu.escposprinter;
 
+import androidx.core.content.res.ResourcesCompat;
+
 import com.dantsu.escposprinter.connection.DeviceConnection;
 import com.dantsu.escposprinter.exceptions.EscPosBarcodeException;
 import com.dantsu.escposprinter.exceptions.EscPosConnectionException;
@@ -245,5 +247,10 @@ public class EscPosPrinter extends EscPosPrinterSize {
     public EscPosPrinter printCharsetEncodingCharacters(int charsetId) {
         this.printer.printCharsetEncodingCharacters(charsetId);
         return this;
+    }
+
+    @Override
+    public ResourcesCompat getResources() {
+        return null;
     }
 }

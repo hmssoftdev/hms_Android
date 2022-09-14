@@ -1,5 +1,7 @@
 package com.dantsu.thermalprinter.async;
 
+import androidx.core.content.res.ResourcesCompat;
+
 import com.dantsu.escposprinter.EscPosPrinterSize;
 import com.dantsu.escposprinter.connection.DeviceConnection;
 
@@ -31,5 +33,10 @@ public class AsyncEscPosPrinter extends EscPosPrinterSize {
 
     public String[] getTextsToPrint() {
         return this.textsToPrint;
+    }
+
+    @Override
+    public ResourcesCompat getResources() {
+        return null;
     }
 }

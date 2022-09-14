@@ -13,9 +13,9 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -27,6 +27,7 @@ import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnection
 import com.dantsu.escposprinter.connection.tcp.TcpConnection;
 import com.dantsu.escposprinter.connection.usb.UsbConnection;
 import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections;
+import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
 import com.dantsu.thermalprinter.async.AsyncBluetoothEscPosPrint;
 import com.dantsu.thermalprinter.async.AsyncEscPosPrint;
 import com.dantsu.thermalprinter.async.AsyncEscPosPrinter;
@@ -38,18 +39,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.BreakIterator;
+import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
-public class WebAppInterface {
+public class WebAppInterface<printhelp> {
+    public String bussname;
+    public String DeliveryMode;
     Context context;
-    String data1,data2,orderid,kotorderid,invoicenum;
-    private String DeliveryMode,bussname;
+    String data1,data2,orderid,kotorderid,invoicenum,bussadd,busphone, bussstate, busscity, bussgst,imagenum, bussrestlogo;
 
-    int itemtotal;
+
+    int itemtotal,cgst,sgst,gsttotal;
     int valuetotal;
+
+    invoicehelper inhelp=new invoicehelper();
     StringBuilder str = new StringBuilder();
+    Printingmethodhelper printhelp=new Printingmethodhelper();
+
+    public StringBuilder getStr() {
+        return str;
+    }
 
     public WebAppInterface(Context c){
         context=c;
@@ -61,38 +71,68 @@ public class WebAppInterface {
         int t= Integer.parseInt(billingtype);
         orderid = orderdata;
         browseBluetoothDevice();
+        jsonparse();
         if(t==1)
         {
-        data1 = cartdata;
-        jsonparse1();
-        printBluetoothkot();
-         }
-          else if(t==2){
-              data2=cartdata;
-             jsonparse2();
-              printBluetoothbill();
-          }
+            data1 = cartdata;
+            jsonparse1();
+            printBluetoothkot();
+        }
+        else if(t==2){
+            data2=cartdata;
+            jsonparse2();
+            DeviceConnection printerConnection = null;
+            printBluetoothbill(printerConnection);
+        }
 
+    }
+
+    private void jsonparse() {
+        try{
+            JSONObject idobj = new JSONObject(String.valueOf(orderid));
+            String num1= idobj.getString("orderid");
+            String num2= idobj.getString("invoiceno");
+            String busname=idobj.getString("bussname");
+            String busad=idobj.getString("bussaddres");
+            String buspho=idobj.getString("bussphone");
+            String buscity=idobj.getString("busscity");
+            String busstate=idobj.getString("bussstate");
+            String busgst=idobj.getString("bussgst");
+            String busrestlogo=idobj.getString("bussrestlogo");
+
+            bussrestlogo=busrestlogo;
+
+
+            inhelp.kotorderid=num2;
+            inhelp.invoicenum=num1;
+            inhelp.bussadd=busad;
+            inhelp.bussname=busname;
+            inhelp.bussphone=buspho;
+            inhelp.busscity=buscity;
+            inhelp.bussstate=busstate;
+            inhelp. bussgst=busgst;
+
+
+        }
+        catch (Exception e){
+
+        }
     }
 
 
     public void jsonparse1(){
         try {
             str.setLength(0);
-            JSONObject idobj = new JSONObject(String.valueOf(orderid));
-            String num1= idobj.getString("orderid");
-            String num2= idobj.getString("invoiceno");
-            String busname=idobj.getString("bussname");
-            kotorderid=num1;
-            invoicenum=num2;
-            bussname=busname;
+
             JSONObject obj = new JSONObject(String.valueOf(data1));
+            JSONArray cartids1 = obj.getJSONArray("tableIds");
             JSONArray cartitem = obj.getJSONArray("orderItems");
             String Mode= obj.getString("deliveryMode");
-            DeliveryMode=Mode;
+            inhelp.DeliveryMode=Mode;
             int length = obj .length();
             for(int i=0; i<length; i++) {
                 JSONObject jsonObj = cartitem.getJSONObject(i);
+                JSONObject jsonObj1 = cartids1.getJSONObject(i);
 
                 int quantity = jsonObj.getInt("quantity");
                 String name = jsonObj.getString("name");
@@ -109,21 +149,25 @@ public class WebAppInterface {
 
         try {
             str.setLength(0);
-            JSONObject idobj = new JSONObject(String.valueOf(orderid));
-            String num1= idobj.getString("orderid");
-            String num2= idobj.getString("invoiceno");
-            String busname=idobj.getString("bussname");
-            kotorderid=num1;
-            invoicenum=num2;
-            bussname=busname;
+
             JSONObject obj = new JSONObject(String.valueOf(data2));
             JSONArray cartitem = obj.getJSONArray("orderItems");
+            String cartids = obj.getString("tableIds");
             String Mode= obj.getString("deliveryMode");
-            int grosstot=obj.getInt("grossTotal");
+            int grosstot=obj.getInt("itemTotal");
             int itmtot=obj.getInt("itemCount");
-            itemtotal=itmtot;
-            valuetotal=grosstot;
-            DeliveryMode=Mode;
+
+            int sg=obj.getInt("gstTotal")/2;
+        inhelp.valuetotal=grosstot;
+        inhelp.itemtotal=itmtot;
+//            int cg=obj.getInt("");
+            int gt=obj.getInt("grossTotal");
+            inhelp.cgst=sg;
+            inhelp.sgst=sg;
+            inhelp.gsttotal=gt;
+            inhelp.itemtotal=itmtot;
+            inhelp.valuetotal=grosstot;
+            inhelp.DeliveryMode=Mode;
             int length = obj .length();
 
             for(int i=0; i<length; i++) {
@@ -141,8 +185,37 @@ public class WebAppInterface {
             e.printStackTrace();
         }
     }
+    public void jsonparse3(){
 
+        try {
+            str.setLength(0);
+            JSONObject obj = new JSONObject(String.valueOf(data2));
+            JSONArray cartitem = obj.getJSONArray("orderItems");
+            String cartids = obj.getString("tableIds");
+            String Mode= obj.getString("CGST");
+            String GST= obj.getString("SGST");
+            int grosstot=obj.getInt("GrandTotal");
+            int itmtot=obj.getInt("itemCount");
+            inhelp.itemtotal=itmtot;
+            inhelp.valuetotal=grosstot;
+            inhelp.DeliveryMode=Mode;
+            int length = obj .length();
 
+            for(int i=0; i<length; i++) {
+                JSONObject jsonObj = cartitem.getJSONObject(i);
+//                Toast.makeText(context, jsonObj.getString("name"), Toast.LENGTH_LONG).show();
+
+                // getting inner array Ingredients
+                int quantity = jsonObj.getInt("quantity");
+                String name = jsonObj.getString("name");
+                int price=jsonObj.getInt("price");
+                int value=quantity * price;
+                str.append((String.format("%s[R]%s[C]%s[L]%s", name,quantity,price,value)+"\n"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     /*==============================================================================================
@@ -232,7 +305,7 @@ public class WebAppInterface {
                     .execute(this.getAsyncEscPosPrinterkot(selectedDevice));
         }
     }
-    public void printBluetoothbill() {
+    public void printBluetoothbill(DeviceConnection printerConnection) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
         } else if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
@@ -256,7 +329,7 @@ public class WebAppInterface {
                         }
                     }
             )
-                    .execute(this.getAsyncEscPosPrinterbillprint(selectedDevice));
+                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint4(selectedDevice,str,inhelp));
         }
     }
 
@@ -333,6 +406,7 @@ public class WebAppInterface {
                             Log.e("Async.OnPrintFinished", "AsyncEscPosPrint.OnPrintFinished : An error occurred !");
                         }
 
+
                         @Override
                         public void onSuccess(AsyncEscPosPrinter asyncEscPosPrinter) {
                             Log.i("Async.OnPrintFinished", "AsyncEscPosPrint.OnPrintFinished : Print is finished !");
@@ -364,7 +438,7 @@ public class WebAppInterface {
         AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 320, 80, 50);
         return printer.addTextToPrint(
 
-                        "[C]<u><font size='medium'>ORDER:"+kotorderid+"</font></u>\n" +
+                "[C]<u><font size='medium'>ORDER:"+kotorderid+"</font></u>\n" +
                         "[C]Mode:"+DeliveryMode+"\n" +
                         "[C]<u type='double'>" + format.format(new Date()) + "</u>\n" +
 //                        "[C]\n" +
@@ -375,31 +449,141 @@ public class WebAppInterface {
 
     }
     @SuppressLint("SimpleDateFormat")
-    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint(DeviceConnection printerConnection) {
-        SimpleDateFormat format = new SimpleDateFormat(" yyyy-MM-dd 'at' HH:mm");
+
+    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint1(DeviceConnection printerConnection) {
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+        // current time
+        Format f = new SimpleDateFormat("HH:mm");
+        String strResult = f.format(new Date());
+        System.out.println("Time = "+strResult);
+
 
 
         System.out.println(str);
-        AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 320, 80, 50);
+        AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 220, 75, 47);
         return printer.addTextToPrint(
                 "[C]<u><font size='big'>"+bussname+"</font></u>\n" +
+                        "[C]"+bussadd +"\n"+
 
-                        "[C]Invoice No:"+invoicenum+"\n"+
-                        "[C]"+DeliveryMode+"<u type='double'>" + format.format(new Date()) +"</u>\n"+
+                        "[C]Tel:"+busphone+"\n"+
+                        "[L]Invoice No:"+invoicenum+""+"[R]"+"Date:"+"[L]"+format.format(new Date())+"\n"+
+                        "[L]Mode:"+DeliveryMode+"<u type='double'>"+" [R]Time:"+"[L]"+f.format(new Date())+"\n"+
 
-                        "================================================\n" +
+                        "-----------------------------------------\n" +
                         "[C]<b>Product [R]Quantity [C]Rate [L]Value </b>\n"+
-                        "------------------------------------------------\n" +
+                        "-----------------------------------------\n" +
                         "[L]"+str+
-                        "------------------------------------------------\n" +
-                        "[L]<b>Total Item"+"[R]"+itemtotal+"[C]"+"Total"+"[L]"+valuetotal+"</b>\n"+
-                        "------------------------------------------------\n" +
+                        "----------------------------------------\n" +
+                        "[L]<b >Total Item"+"[R]"+itemtotal+"[C]"+"Total"+"[L]"+valuetotal+"</b>\n"+
+                        "----------------------------------------\n" +
                         "[C]<u>Thank You Visit Again</u>!!!!"
         );
 
     }
-        public void clearitem(){
-    str.setLength(0);
-        }
+    @SuppressLint("SimpleDateFormat")
+    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint2(DeviceConnection printerConnection) {
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+        Format f = new SimpleDateFormat("HH:mm");
+        String strResult = f.format(new Date());
+        System.out.println("Time = "+strResult);
+        System.out.println(str);
+        AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 220, 70, 47);
+        return printer.addTextToPrint(
+                "[C]<u><font size='big'>"+bussname+"</font></u>\n" +
+                        "[C]"+bussadd +"\n"+
+
+                        "[C]Tel:"+busphone+"\n"+
+                        "[L]Invoice No:"+invoicenum+""+"[R]"+"Date:"+"[L]"+format.format(new Date())+"\n"+
+                        "[L]Mode:"+DeliveryMode+"<u type='double'>"+" [R]Time:"+"[L]"+f.format(new Date())+"\n"+
+
+                        "-----------------------------------------\n" +
+                        "[C]<b>Product [R]Quantity [C]Rate [L]Value </b>\n"+
+                        "-----------------------------------------\n" +
+                        "[L]"+str+
+                        "----------------------------------------\n" +
+                        "[L]<b >Total Item"+"[R]"+itemtotal+"[C]"+"Total"+"[L]"+valuetotal+"</b>\n"+
+                        "----------------------------------------\n" +
+                        "                        [R]<b>"+"CGST %:"+"[L]"+"[L]"+cgst+"\n"+
+                        "                        [R]<b>"+"SGST %:"+"[L]"+"[L]"+sgst+"\n"+
+                        "----------------------------------------\n" +
+                        "                 [R]<b>"+"Grand Total :"+"[R]"+"[L]"+gsttotal+"  \n"+
+                        "----------------------------------------\n" +
+                        "[C]<u>Thank You Visit Again</u>!!!!"
+        );
+
+    }
+    @SuppressLint("SimpleDateFormat")
+    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint3(DeviceConnection printerConnection) {
+        SimpleDateFormat simpleformat = new SimpleDateFormat("MM-dd-yy 'Time:' hh:mm");
+
+
+
+
+        System.out.println(str);
+        AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 203, 70, 45);
+        return printer.addTextToPrint(
+                "[C]<b>"+"Invoice"+"</u>\n" +
+                        "[L]<b>Invoice No:"+invoicenum+"\n"+
+                        "[L]<b>"+"Date:"+simpleformat.format(new Date())+"\n"+
+                        "[L]<b>Delivery Mode:"+DeliveryMode+" <u type='double'>\n" +
+                        "[L]<b>Name: "+bussname+"</font></u>\n" +
+                        "[L]<b>Address: "+bussadd +"\n"+
+                        "[L]<b>city: "+busscity +"\n"+ "[L]<b>state: "+bussstate +"\n"+
+                        "[L]<b>GSTIN NO: "+bussgst+"\n"+
+                        "---------------------------------------\n" +
+                        "[C]<b>Product [R]Quantity [C]Rate [L]Value </b>\n"+
+                        "---------------------------------------\n" +
+                        "[L]"+str+
+                        "--------------------------------------\n" +
+                        "[L]<b >Total Item"+"[R]"+itemtotal+"[C]"+"Total"+"[L]"+valuetotal+"</b>\n"+
+                        "--------------------------------------\n" +
+                        "                        [R]<b>"+"CGST %:"+"[L]"+"[L]"+cgst+"\n"+
+                        "                        [R]<b>"+"SGST %:"+"[L]"+"[L]"+sgst+"\n"+
+                        "--------------------------------------\n" +
+                        "                 [R]<b>"+"Grand Total :"+"[R]"+"[L]"+gsttotal+"  \n"+
+                        "--------------------------------------\n" +
+                        "[C]<u>Thank You Visit Again</u>!!!!"
+        );
+
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint4(DeviceConnection printerConnection) {
+        SimpleDateFormat simpleformat = new SimpleDateFormat("dd MMM yyyy HH:mm a");
+        System.out.println(str);
+
+        AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 203, 70, 45);
+        return printer.addTextToPrint(
+                "[C]<img>"+PrinterTextParserImg.bitmapToHexadecimalString(printer, context.getApplicationContext().getResources().getDrawableForDensity
+                        (R.drawable .logo, DisplayMetrics.DENSITY_MEDIUM))+"</img>\n" +
+                        "[C]<b>"+imagenum+"\n"+
+                       "[C]<b>Invoice No:"+invoicenum+"\n"+
+                        "[C]<b>Name: "+bussname+"</font></u>\n" +
+                        "[C]<b>"+bussadd +"\n"+
+                        "[C]Tel:"+busphone+"\n"+
+                        "[C]<b>"+"Date:"+simpleformat.format(new Date())+"\n"+
+                        "[C]<b>"+"Draft Bill"+"\n"+
+                        "[C]<b>"+"Dine In"+"\n"+
+                        "-----------------------------------------------\n" +
+                        "[L]<b>"+"Tableids:Tab30 "+"[R]"+"User:"+"[L]"+bussname+"</font></u>\n" +
+                        "-----------------------------------------------\n" +
+                        "[C]<b>Product [C]Quantity [C]Rate [L]Value </b>\n"+
+                        "---------------------------------------\n" +
+                        "[L]"+str+
+                        "--------------------------------------\n" +
+                        "[L]<b >Total Item"+"[R]"+itemtotal+"[C]"+"Total"+"[L]"+valuetotal+"</b>\n"+
+                        "--------------------------------------\n" +
+                        " [L]<b>"+"Grand Total :[C]"+"[L]"+valuetotal+"  \n"+
+                        "--------------------------------------\n" +
+                        "[C]<u>Thank You Visit Again</u>!!!!"
+
+
+        );
+
+    }
+
+    public void clearitem(){
+        str.setLength(0);
+    }
 
 }
