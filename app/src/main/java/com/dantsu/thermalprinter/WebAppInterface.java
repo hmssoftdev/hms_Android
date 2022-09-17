@@ -64,9 +64,13 @@ public class WebAppInterface<printhelp> {
     public WebAppInterface(Context c){
         context=c;
     }
-
     @JavascriptInterface
-    public void printtext(String cartdata,String orderdata,String billingtype) {
+    public void userdata(String data){
+       String j=data;
+    }
+    @JavascriptInterface
+
+    public void printtext(String cartdata, String orderdata, String billingtype) {
 
         int t= Integer.parseInt(billingtype);
         orderid = orderdata;
@@ -81,8 +85,8 @@ public class WebAppInterface<printhelp> {
         else if(t==2){
             data2=cartdata;
             jsonparse2();
-            DeviceConnection printerConnection = null;
-            printBluetoothbill(printerConnection);
+
+            printBluetoothbill();
         }
 
     }
@@ -305,7 +309,7 @@ public class WebAppInterface<printhelp> {
                     .execute(this.getAsyncEscPosPrinterkot(selectedDevice));
         }
     }
-    public void printBluetoothbill(DeviceConnection printerConnection) {
+    public void printBluetoothbill() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
         } else if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
@@ -329,7 +333,7 @@ public class WebAppInterface<printhelp> {
                         }
                     }
             )
-                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint4(selectedDevice,str,inhelp));
+                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint1(selectedDevice,str,inhelp));
         }
     }
 
