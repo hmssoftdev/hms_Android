@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -49,14 +50,15 @@ public class WebAppInterface<printhelp> {
     Context context;
     String data1,data2,orderid,kotorderid,invoicenum,bussadd,busphone, bussstate, busscity, bussgst,imagenum, bussrestlogo;
 
-
-    int itemtotal,cgst,sgst,gsttotal;
+    String SHARED_PREF="sharedprefer";
+    String TEXT="text";
+    int itemtotal,cgst,sgst,gsttotal,invoicetype;
     int valuetotal;
-
+    sessionmanagement ses=new sessionmanagement(context);
     invoicehelper inhelp=new invoicehelper();
     StringBuilder str = new StringBuilder();
     Printingmethodhelper printhelp=new Printingmethodhelper();
-
+    userdata usersdata=new userdata();
     public StringBuilder getStr() {
         return str;
     }
@@ -65,8 +67,24 @@ public class WebAppInterface<printhelp> {
         context=c;
     }
     @JavascriptInterface
-    public void userdata(String data){
-       String j=data;
+    public void userdata( String set, String user){
+        JSONObject j1= null,j2 = null;
+        try {
+            j1 = new JSONObject(String.valueOf(set));
+            j2=new JSONObject(String.valueOf(user));
+            invoicetype=j2.getInt("invoiceTemplateType");
+            
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        SharedPreferences sharedPreferences =context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(TEXT, j1.toString());
+        editor.apply();
+
+        System.out.println(data2.toString());
+//        System.out.println(data.toString());
+
     }
     @JavascriptInterface
 
@@ -105,7 +123,7 @@ public class WebAppInterface<printhelp> {
             String busrestlogo=idobj.getString("bussrestlogo");
 
             bussrestlogo=busrestlogo;
-
+            kotorderid=num1;
 
             inhelp.kotorderid=num2;
             inhelp.invoicenum=num1;
@@ -132,12 +150,11 @@ public class WebAppInterface<printhelp> {
             JSONArray cartids1 = obj.getJSONArray("tableIds");
             JSONArray cartitem = obj.getJSONArray("orderItems");
             String Mode= obj.getString("deliveryMode");
+            DeliveryMode=Mode;
             inhelp.DeliveryMode=Mode;
-            int length = obj .length();
+            int length = cartitem.length();
             for(int i=0; i<length; i++) {
                 JSONObject jsonObj = cartitem.getJSONObject(i);
-                JSONObject jsonObj1 = cartids1.getJSONObject(i);
-
                 int quantity = jsonObj.getInt("quantity");
                 String name = jsonObj.getString("name");
 
@@ -309,6 +326,25 @@ public class WebAppInterface<printhelp> {
                     .execute(this.getAsyncEscPosPrinterkot(selectedDevice));
         }
     }
+//    selectingbilltype(int i){
+//        switch(i) {
+//           case 1:
+//               this.printhelp.getAsyncEscPosPrinterbillprint1(selectedDevice,str,inhelp);
+//               break;
+//           case 2:
+//               this.printhelp.getAsyncEscPosPrinterbillprint2(selectedDevice,str,inhelp);
+//               break;
+//           case 3:
+//               this.printhelp.getAsyncEscPosPrinterbillprint3(selectedDevice,str,inhelp);
+//               break;
+//           case 4:
+//               this.printhelp.getAsyncEscPosPrinterbillprint4(selectedDevice,str,inhelp);
+//               break;
+//           case 5:
+//               this.printhelp.getAsyncEscPosPrinterbillprint4(selectedDevice,str,inhelp);
+//               break;
+//       }
+//   }
     public void printBluetoothbill() {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
@@ -333,7 +369,7 @@ public class WebAppInterface<printhelp> {
                         }
                     }
             )
-                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint1(selectedDevice,str,inhelp));
+                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint(selectedDevice,str,inhelp,invoicetype));
         }
     }
 
@@ -559,7 +595,7 @@ public class WebAppInterface<printhelp> {
         AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 203, 70, 45);
         return printer.addTextToPrint(
                 "[C]<img>"+PrinterTextParserImg.bitmapToHexadecimalString(printer, context.getApplicationContext().getResources().getDrawableForDensity
-                        (R.drawable .logo, DisplayMetrics.DENSITY_MEDIUM))+"</img>\n" +
+                        (R.drawable.logo, DisplayMetrics.DENSITY_MEDIUM))+"</img>\n" +
                         "[C]<b>"+imagenum+"\n"+
                        "[C]<b>Invoice No:"+invoicenum+"\n"+
                         "[C]<b>Name: "+bussname+"</font></u>\n" +

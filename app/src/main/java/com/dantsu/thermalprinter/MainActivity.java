@@ -15,11 +15,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +31,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.dantsu.escposprinter.EscPosPrinter;
 import com.dantsu.escposprinter.connection.DeviceConnection;
@@ -53,7 +56,8 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    String SHARED_PREF="sharedprefer";
+    String TEXT="text";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,9 +65,18 @@ public class MainActivity extends AppCompatActivity {
         WebView webView  = findViewById(R.id.web);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+
+     SharedPreferences mSharedPreference=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
+
+        String value=mSharedPreference.getString(TEXT,"No Value");
+
+
+        Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 //        webView.addJavascriptInterface(new WebAppInterface(this), "jsinterface");
+
         webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
+
 //        webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
         webView.setWebViewClient(new MyWebViewClient());
 
