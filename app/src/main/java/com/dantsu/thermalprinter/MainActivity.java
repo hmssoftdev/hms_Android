@@ -51,6 +51,10 @@ import com.dantsu.thermalprinter.async.AsyncEscPosPrinter;
 import com.dantsu.thermalprinter.async.AsyncTcpEscPosPrint;
 import com.dantsu.thermalprinter.async.AsyncUsbEscPosPrint;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -75,6 +79,34 @@ public class MainActivity extends AppCompatActivity {
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 //        webView.addJavascriptInterface(new WebAppInterface(this), "jsinterface");
 
+        if(value ==""){
+
+        }
+        else{
+            String name = null,username = null,token = null;
+            int usertype = 0,id = 0,adminid = 0;
+            try {
+                JSONObject jj = new JSONObject(String.valueOf(value));
+                id=jj.getInt("id");
+                name=jj.getString("name");
+                username=jj.getString("username");
+                token=jj.getString("token");
+                usertype= jj.getInt("userType");
+                adminid= jj.getInt("adminId");
+            }
+           catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            StringBuffer buffer=new StringBuffer("https://hmsdev.fy5restaurantsoftware.com/#/login");
+            buffer.append("?id="+URLEncoder.encode(String.valueOf(id)));
+            buffer.append("name="+URLEncoder.encode(String.valueOf(name)));
+            buffer.append("username="+URLEncoder.encode(String.valueOf(username)));
+            buffer.append("token="+URLEncoder.encode(String.valueOf(token)));
+            buffer.append("usertype="+URLEncoder.encode(String.valueOf(usertype)));
+            buffer.append("adminid="+URLEncoder.encode(String.valueOf(adminid)));
+            webView.loadUrl(buffer.toString());
+        }
         webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
 
 //        webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
