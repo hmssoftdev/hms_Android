@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
         String value=mSharedPreference.getString(TEXT,"No Value");
 
 
-        Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 //        webView.addJavascriptInterface(new WebAppInterface(this), "jsinterface");
 
-        if(value ==""){
+        if(value =="No Value"){
             webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
         }
         else{

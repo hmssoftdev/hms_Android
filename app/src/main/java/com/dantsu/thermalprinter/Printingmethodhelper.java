@@ -1,6 +1,7 @@
 package com.dantsu.thermalprinter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.dantsu.escposprinter.connection.DeviceConnection;
 import com.dantsu.thermalprinter.async.AsyncEscPosPrinter;
@@ -17,8 +18,13 @@ public class Printingmethodhelper {
     DeviceConnection printerConnection;
     StringBuilder str;
     invoicehelper inhelp;
-    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint(DeviceConnection printerConnection, StringBuilder str, invoicehelper inhelp,int i) {
+    String SHARED_PREF="sharedprefer";
+    String SETTING="setting";
+    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint(DeviceConnection printerConnection, StringBuilder str, invoicehelper inhelp) {
 
+        SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+
+        int i=mSharedPreference.getInt(SETTING,1);
         SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
 //        // current time
         SimpleDateFormat simpleformat = new SimpleDateFormat("dd MMM yyyy HH:mm a");

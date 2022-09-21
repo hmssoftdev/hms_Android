@@ -52,40 +52,57 @@ public class WebAppInterface<printhelp> {
 
     String SHARED_PREF="sharedprefer";
     String TEXT="text";
+    String SETTING="setting";
+    int invoiceTemplateType;
     int itemtotal,cgst,sgst,gsttotal,invoicetype;
     int valuetotal;
+
     sessionmanagement ses=new sessionmanagement(context);
     invoicehelper inhelp=new invoicehelper();
     StringBuilder str = new StringBuilder();
     Printingmethodhelper printhelp=new Printingmethodhelper();
     userdata usersdata=new userdata();
-    public StringBuilder getStr() {
-        return str;
-    }
+
+    JSONObject j1= null,j2 = null;
 
     public WebAppInterface(Context c){
         context=c;
+//        invoiceTemplateCheck();
     }
     @JavascriptInterface
     public void userdata( String set, String user){
-        JSONObject j1= null,j2 = null;
+        int running = 1;
         try {
             j1 = new JSONObject(String.valueOf(set));
             j2=new JSONObject(String.valueOf(user));
             invoicetype=j2.getInt("invoiceTemplateType");
-            
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
         SharedPreferences sharedPreferences =context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(TEXT, j1.toString());
+        editor.putInt(SETTING, invoicetype);
         editor.apply();
 
         System.out.println(data2.toString());
 //        System.out.println(data.toString());
 
     }
+//    public void invoiceTemplateCheck() {
+//
+//            if (invoicetype == 0){
+//                SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+//
+//                invoicetype=mSharedPreference.getInt(SETTING,1);
+//            }
+//
+//
+//
+//
+//    }
+
     @JavascriptInterface
 
     public void printtext(String cartdata, String orderdata, String billingtype) {
@@ -369,7 +386,7 @@ public class WebAppInterface<printhelp> {
                         }
                     }
             )
-                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint(selectedDevice,str,inhelp,invoicetype));
+                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint(selectedDevice,str,inhelp));
         }
     }
 
