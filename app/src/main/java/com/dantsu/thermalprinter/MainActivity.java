@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     String SHARED_PREF="sharedprefer";
     String TEXT="text";
+login done    StringBuffer buffer=new StringBuffer("https://hmsdev.fy5restaurantsoftware.com/#/login");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 //        webView.addJavascriptInterface(new WebAppInterface(this), "jsinterface");
 
         if(value ==""){
-
+            webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
         }
         else{
             String name = null,username = null,token = null;
@@ -98,16 +99,16 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            StringBuffer buffer=new StringBuffer("https://hmsdev.fy5restaurantsoftware.com/#/login");
+
             buffer.append("?id="+URLEncoder.encode(String.valueOf(id)));
-            buffer.append("name="+URLEncoder.encode(String.valueOf(name)));
-            buffer.append("username="+URLEncoder.encode(String.valueOf(username)));
-            buffer.append("token="+URLEncoder.encode(String.valueOf(token)));
-            buffer.append("usertype="+URLEncoder.encode(String.valueOf(usertype)));
-            buffer.append("adminid="+URLEncoder.encode(String.valueOf(adminid)));
+            buffer.append("&name="+URLEncoder.encode(String.valueOf(name)));
+            buffer.append("&username="+URLEncoder.encode(String.valueOf(username)));
+            buffer.append("&token="+URLEncoder.encode(String.valueOf(token)));
+            buffer.append("&usertype="+URLEncoder.encode(String.valueOf(usertype)));
+            buffer.append("&adminid="+URLEncoder.encode(String.valueOf(adminid)));
             webView.loadUrl(buffer.toString());
         }
-        webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
+    System.out.println(buffer.toString());
 
 //        webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
         webView.setWebViewClient(new MyWebViewClient());
