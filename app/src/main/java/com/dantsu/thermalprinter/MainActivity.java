@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     String SHARED_PREF="sharedprefer";
     String TEXT="text";
-login done    StringBuffer buffer=new StringBuffer("https://hmsdev.fy5restaurantsoftware.com/#/login");
+   StringBuffer buffer=new StringBuffer("https://hmsdev.fy5restaurantsoftware.com/#/login");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
