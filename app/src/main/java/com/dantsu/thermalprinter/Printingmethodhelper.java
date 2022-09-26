@@ -20,11 +20,11 @@ public class Printingmethodhelper {
     invoicehelper inhelp;
     String SHARED_PREF="sharedprefer";
     String SETTING="setting";
-    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint(DeviceConnection printerConnection, StringBuilder str, invoicehelper inhelp) {
+//    SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+//    int i=mSharedPreference.getInt(SETTING,1);
+    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint(DeviceConnection printerConnection, StringBuilder str, invoicehelper inhelp,int i) {
 
-        SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
 
-        int i=mSharedPreference.getInt(SETTING,1);
         SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
 //        // current time
         SimpleDateFormat simpleformat = new SimpleDateFormat("dd MMM yyyy HH:mm a");
@@ -118,7 +118,7 @@ public class Printingmethodhelper {
                case 5:
                s="[C]<b>Invoice No:"+inhelp.invoicenum+"\n"+
                        "[C]<b>Name: "+inhelp.bussname+"</font></u>\n" +
-                       "[C]<b>"+inhelp.bussadd +"\n"+
+                       "[C]<b>"+        inhelp.bussadd +"\n"+
                        "[C]Tel:"+inhelp.bussphone+"\n"+
                        "[C]<b>"+"Date:"+simpleformat.format(new Date())+"\n"+
                        "[C]<b>"+"Draft Bill"+"\n"+

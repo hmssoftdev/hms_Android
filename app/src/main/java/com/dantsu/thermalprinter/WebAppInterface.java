@@ -67,7 +67,11 @@ public class WebAppInterface<printhelp> {
 
     public WebAppInterface(Context c){
         context=c;
-//        invoiceTemplateCheck();
+        invoiceTemplateCheck();
+    }
+    public void userlogout()
+    {
+
     }
     @JavascriptInterface
     public void userdata( String set, String user){
@@ -87,21 +91,18 @@ public class WebAppInterface<printhelp> {
         editor.apply();
 
         System.out.println(data2.toString());
-//        System.out.println(data.toString());
+
 
     }
-//    public void invoiceTemplateCheck() {
-//
-//            if (invoicetype == 0){
-//                SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
-//
-//                invoicetype=mSharedPreference.getInt(SETTING,1);
-//            }
-//
-//
-//
-//
-//    }
+    public void invoiceTemplateCheck() {
+
+            if (invoicetype == 0){
+                SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+
+                invoicetype=mSharedPreference.getInt(SETTING,1);
+            }
+
+    }
 
     @JavascriptInterface
 
@@ -142,8 +143,8 @@ public class WebAppInterface<printhelp> {
             bussrestlogo=busrestlogo;
             kotorderid=num1;
 
-            inhelp.kotorderid=num2;
-            inhelp.invoicenum=num1;
+            inhelp.kotorderid=num1;
+            inhelp.invoicenum=num2;
             inhelp.bussadd=busad;
             inhelp.bussname=busname;
             inhelp.bussphone=buspho;
@@ -386,7 +387,7 @@ public class WebAppInterface<printhelp> {
                         }
                     }
             )
-                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint(selectedDevice,str,inhelp));
+                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint(selectedDevice,str,inhelp,invoicetype));
         }
     }
 
@@ -492,10 +493,10 @@ public class WebAppInterface<printhelp> {
         SimpleDateFormat format = new SimpleDateFormat(" yyyy-MM-dd 'at' HH:mm:ss");
 
         System.out.println(str);
-        AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 320, 80, 50);
+        AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 320, 80, 47);
         return printer.addTextToPrint(
 
-                "[C]<u><font size='medium'>ORDER:"+kotorderid+"</font></u>\n" +
+                "[C]<u><font size='medium'>ORDER:"+   kotorderid+"</font></u>\n" +
                         "[C]Mode:"+DeliveryMode+"\n" +
                         "[C]<u type='double'>" + format.format(new Date()) + "</u>\n" +
 //                        "[C]\n" +
