@@ -387,7 +387,7 @@ public class WebAppInterface<printhelp> {
                         }
                     }
             )
-                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint(selectedDevice,str,inhelp,invoicetype));
+                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint (selectedDevice,str,inhelp,invoicetype));
         }
     }
 
