@@ -110,7 +110,7 @@ public class Printingmethodhelper {
                         "[C]<u>Thank You Visit Again</u>!!!!" ;
                break;
                case 5:
-               s= "[C]<b>Name: "+inhelp.bussname+"</font></u>\n" +
+               s=      "[C]<b>Name: "+inhelp.bussname+"</font></u>\n" +
                        "[C]<b>"+ inhelp.bussadd +"\n"+
                        "[C]Tel:"+inhelp.bussphone+"\n"+
                        "[C]<b>"+"Date:"+simpleformat.format(new Date())+"\n"+
@@ -124,7 +124,10 @@ public class Printingmethodhelper {
                        "----------------------------------------\n" +
                        "[L]<b >Total Item"+"[R]"+inhelp.itemtotal+"[C]"+"Total"+"[L]"+inhelp.valuetotal+"</b>\n"+
                        "----------------------------------------\n" +
-                       "[C]<u>Thank You Visit Again</u>!!!!" ;
+                       "[C]<qrcode size='20'>https://hmsdocuments.s3.us-east-2.amazonaws.com/qr.PNG2022-09-16T06:31:31</qrcode>\n"+
+                       "[C]<u>Thank You Visit Again</u>!!!!";
+
+
 
                break;
 
