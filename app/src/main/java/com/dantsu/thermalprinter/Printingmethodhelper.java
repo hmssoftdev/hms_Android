@@ -126,9 +126,6 @@ public class Printingmethodhelper {
                        "----------------------------------------\n" +
                        "[C]<qrcode size='20'>https://hmsdocuments.s3.us-east-2.amazonaws.com/qr.PNG2022-09-16T06:31:31</qrcode>\n"+
                        "[C]<u>Thank You Visit Again</u>!!!!";
-
-
-
                break;
 
        }
