@@ -2,12 +2,16 @@ package com.dantsu.thermalprinter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.DisplayMetrics;
 
 import com.dantsu.escposprinter.connection.DeviceConnection;
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
 import com.dantsu.thermalprinter.async.AsyncEscPosPrinter;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,10 +26,19 @@ public class Printingmethodhelper {
     invoicehelper inhelp;
     String SHARED_PREF="sharedprefer";
     String SETTING="setting";
+    Bitmap bitmap;
 //    SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
 //    int i=mSharedPreference.getInt(SETTING,1);
     public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint(DeviceConnection printerConnection, StringBuilder str, invoicehelper inhelp,int i) {
+try{
+    String ul="https://hmsdocuments.s3.us-east-2.amazonaws.com/qr.PNG2022-09-16T06:31:31";
+    URL connect=new URL(ul);
+    InputStream in=connect.openStream();
+    bitmap= BitmapFactory.decodeStream(in);
+}
+catch (Exception e){
 
+}
 
         SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
 //        // current time
@@ -35,7 +48,8 @@ public class Printingmethodhelper {
         String s = null;
        switch (i){
            case 1:
-              s="[C]<u><font size='big'>" + inhelp.bussname + "</font></u>\n" +
+              s="[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer,bitmap)+"</img>\n" +
+                      "[C]<u><font size='big'>" + inhelp.bussname + "</font></u>\n" +
                        "[C]<b>"+inhelp.bussadd + "\n" +
 
                        "[C]<b>Tel:" + inhelp.bussphone + "\n" +
