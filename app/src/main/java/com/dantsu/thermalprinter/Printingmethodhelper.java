@@ -26,19 +26,23 @@ public class Printingmethodhelper {
     invoicehelper inhelp;
     String SHARED_PREF="sharedprefer";
     String SETTING="setting";
-    Bitmap bitmap;
-//    SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
-//    int i=mSharedPreference.getInt(SETTING,1);
+    Bitmap bitmap1,bitmap2;
+
     public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint(DeviceConnection printerConnection, StringBuilder str, invoicehelper inhelp,int i) {
 try{
-    String ul="https://hmsdocuments.s3.us-east-2.amazonaws.com/qr.PNG2022-09-16T06:31:31";
-    URL connect=new URL(ul);
+
+    URL connect=new URL(inhelp.busslogo);
+    URL connect2=new URL(inhelp.bussupi);
     InputStream in=connect.openStream();
-    bitmap= BitmapFactory.decodeStream(in);
+    InputStream in2= connect2.openStream();
+    bitmap1= BitmapFactory.decodeStream(in);
+    bitmap2= BitmapFactory.decodeStream(in2);
+
 }
 catch (Exception e){
 
 }
+
 
         SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
 //        // current time
@@ -48,10 +52,8 @@ catch (Exception e){
         String s = null;
        switch (i){
            case 1:
-              s="[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer,bitmap)+"</img>\n" +
-                      "[C]<u><font size='big'>" + inhelp.bussname + "</font></u>\n" +
+              s= "[C]<u><font size='big'>" + inhelp.bussname + "</font></u>\n" +
                        "[C]<b>"+inhelp.bussadd + "\n" +
-
                        "[C]<b>Tel:" + inhelp.bussphone + "\n" +
                        "[L]<b>Bill:" + inhelp.invoicenum + "" + "[R]" + "Date:" + "[L]" + format.format(new Date()) + "\n" +
                        "[L]<b>Mode:" + inhelp.DeliveryMode + "<u type='double'>" + " [R]Time:" + "[L]" + f.format(new Date()) + "\n" +
@@ -67,11 +69,12 @@ catch (Exception e){
                break;
                case 2:
                s= "[C]<b>" + "Invoice" + "</u>\n" +
-                       "[L]<b>"+"Bill:" + inhelp.invoicenum + "\n" +
+                       "[C]<img>"+ PrinterTextParserImg.bitmapToHexadecimalString(printer,bitmap1)+"</img>\n" +
+                       "[L]<b>"+"Bill:" + inhelp.invoicenum +"\n"+
                        "[L]<b>" + "Date:" + format.format(new Date()) +"Time:"+f.format(new Date())+"\n"+
                        "[L]<b>Delivery Mode:" + inhelp.DeliveryMode + " <u type='double'>\n" +
                        "[L]<b>Name: " + inhelp.bussname + "</font></u>\n" +
-                       "[L]<b>Address: " + inhelp.bussadd + "\n" +
+                       "[L]<b>Address: " + inhelp.bussadd +"\n" +
                        "[L]<b>city: " + inhelp.busscity + "\n" + "[L]<b>state: " + inhelp.bussstate + "\n" +
                        "[L]<b>GSTIN NO: " + inhelp.bussgst + "\n" +
                        "-----------------------------------------\n" +
@@ -124,22 +127,24 @@ catch (Exception e){
                         "[C]<u>Thank You Visit Again</u>!!!!" ;
                break;
                case 5:
-               s=      "[C]<b>Name: "+inhelp.bussname+"</font></u>\n" +
+               s=   "[C]<img>"+ PrinterTextParserImg.bitmapToHexadecimalString(printer,bitmap1)+"</img>\n" +
+                       "[C]<b>Name: "+inhelp.bussname+"</font></u>\n" +
                        "[C]<b>"+ inhelp.bussadd +"\n"+
                        "[C]Tel:"+inhelp.bussphone+"\n"+
-                       "[C]<b>"+"Date:"+simpleformat.format(new Date())+"\n"+
+                        "[C]<b>"+"Date:"+simpleformat.format(new Date())+"\n"+
                        "[C]<b>Mode:" + inhelp.DeliveryMode + " <u type='double'>\n" +
-                       "-----------------------------------------------\n" +
-                       "[L]<b>"+"Tableids:Tab30 "+"[R]"+"User:"+"[L]"+inhelp.bussname+"</font></u>\n" +
-                       "-----------------------------------------------\n" +
+                       "-----------------------------------------\n" +
                        "[C]<b>Product [C]Quantity [C]Rate [L]Value </b>\n"+
                        "---------------------------------------\n" +
                        "[L]"+str+
                        "----------------------------------------\n" +
                        "[L]<b >Total Item"+"[R]"+inhelp.itemtotal+"[C]"+"Total"+"[L]"+inhelp.valuetotal+"</b>\n"+
                        "----------------------------------------\n" +
-                       "[C]<qrcode size='20'>https://hmsdocuments.s3.us-east-2.amazonaws.com/qr.PNG2022-09-16T06:31:31</qrcode>\n"+
-                       "[C]<u>Thank You Visit Again</u>!!!!";
+                       "[C]<b><u>!!Thank You, Visit Again</u>!!\n"+
+                       "[C]<b>Scan & pay through any UPI app\n"+
+                       "[C]<img>"+ PrinterTextParserImg.bitmapToHexadecimalString(printer,bitmap2)+"</img>\n" +
+                       "[L]<b>Powered by FY5 Software Privated Limited\n";
+
                break;
 
        }

@@ -15,6 +15,7 @@ public class invoicehelper {
     public int sgst;
     public int gsttotal;
     public String DeliveryMode;
-
     public String bussgst;
+    public String bussupi;
+    public String busslogo;
 }

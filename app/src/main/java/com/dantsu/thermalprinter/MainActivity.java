@@ -54,15 +54,20 @@ import com.dantsu.thermalprinter.async.AsyncUsbEscPosPrint;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
     String SHARED_PREF="sharedprefer";
     String TEXT="text";
-   StringBuffer buffer=new StringBuffer("https://hmsdev.fy5restaurantsoftware.com/#/login");
+    String url ;
+
+    StringBuffer buffer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,17 +76,30 @@ public class MainActivity extends AppCompatActivity {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
 
+        url = GetURL();
+        buffer =  new StringBuffer(url);
      SharedPreferences mSharedPreference=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
 
         String value=mSharedPreference.getString(TEXT,"No Value");
+        SharedPreferences sharedpreferences = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString("Username", TEXT);
+        editor.putString("Password", TEXT);
+        editor.putLong("ExpiredDate", System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2880));
+        editor.apply();
+        if (sharedpreferences.getLong("ExpiredDate", -1) > System.currentTimeMillis()) {
+            // read email and password
+        } else {
+            editor = sharedpreferences.edit();
+            editor.clear();
+            editor.apply();
+        }
 
-
-//        Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 //        webView.addJavascriptInterface(new WebAppInterface(this), "jsinterface");
 
         if(value =="No Value"){
-            webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
+            webView.loadUrl(url);
         }
         else{
             String name = null,username = null,token = null;
@@ -99,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
+            StringBuffer buffer=new StringBuffer(url);
             buffer.append("?id="+URLEncoder.encode(String.valueOf(id)));
             buffer.append("&name="+URLEncoder.encode(String.valueOf(name)));
             buffer.append("&username="+URLEncoder.encode(String.valueOf(username)));
@@ -110,11 +128,11 @@ public class MainActivity extends AppCompatActivity {
         }
     System.out.println(buffer.toString());
 
-//        webView.loadUrl("https://hmsdev.fy5restaurantsoftware.com/#/login");
         webView.setWebViewClient(new MyWebViewClient());
 
 
     }
+
     private class MyWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -124,4 +142,25 @@ public class MainActivity extends AppCompatActivity {
             // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
 
     }
+
+    private String GetURL(){
+    try {
+         InputStream stream = getAssets().open("appSetting.json");
+        int size = stream.available();
+        byte[] buffer = new byte[size];
+        stream.read(buffer);
+        stream.close();
+        String tContents = new String(buffer);
+        System.out.println(tContents);
+        JSONObject obj = new JSONObject(tContents);
+        String url = obj.getString("URL");
+        return url;
+    }
+    catch(Exception e){
+        System.out.println(e);
+        return  "";
+    }
+    }
+
+
 }

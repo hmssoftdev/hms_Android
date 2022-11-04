@@ -48,7 +48,7 @@ public class WebAppInterface<printhelp> {
     public String bussname;
     public String DeliveryMode;
     Context context;
-    String data1,data2,orderid,kotorderid,invoicenum,bussadd,busphone, bussstate, busscity, bussgst,imagenum, bussrestlogo;
+    String data1,data2,orderid,kotorderid,invoicenum,bussadd,busphone, bussstate, busscity, bussgst,imagenum, bussrestlogo,bussupicode;
 
     String SHARED_PREF="sharedprefer";
     String TEXT="text";
@@ -84,11 +84,11 @@ public class WebAppInterface<printhelp> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        SharedPreferences sharedPreferences =context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+       SharedPreferences sharedPreferences =context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(TEXT, j1.toString());
         editor.putInt(SETTING, invoicetype);
-        editor.apply();
+         editor.apply();
 
         System.out.println(data2.toString());
 
@@ -139,6 +139,7 @@ public class WebAppInterface<printhelp> {
             String busstate=idobj.getString("bussstate");
             String busgst=idobj.getString("bussgst");
             String busrestlogo=idobj.getString("bussrestlogo");
+            String  bussupi= idobj.getString("bussupi");
 
             bussrestlogo=busrestlogo;
             kotorderid=num1;
@@ -150,8 +151,9 @@ public class WebAppInterface<printhelp> {
             inhelp.bussphone=buspho;
             inhelp.busscity=buscity;
             inhelp.bussstate=busstate;
-            inhelp. bussgst=busgst;
-
+            inhelp.bussgst=busgst;
+            inhelp.bussupi=bussupi;
+            inhelp.busslogo=bussrestlogo;
 
         }
         catch (Exception e){

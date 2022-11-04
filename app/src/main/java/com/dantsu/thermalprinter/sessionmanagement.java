@@ -19,17 +19,18 @@ public class sessionmanagement  {
    x=context;
     }
     public void ShareSession(JSONObject s, JSONObject d){
-        SharedPreferences sharedPreferences =context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+       SharedPreferences sharedPreferences =context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(TEXT, d.toString());
         editor.apply();
         Toast.makeText(context, s.toString(), Toast.LENGTH_SHORT).show();
     }
 }
-class setting{
+
+class setting{     
     public int activeOrderFlow;
 }
-class userdata{
+class   userdata{
     public int id;
     public String name;
     public String username;
