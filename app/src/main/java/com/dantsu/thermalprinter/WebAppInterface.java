@@ -39,6 +39,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.text.BreakIterator;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -49,13 +56,17 @@ public class WebAppInterface<printhelp> {
     public String DeliveryMode;
     Context context;
     String data1,data2,orderid,kotorderid,invoicenum,bussadd,busphone, bussstate, busscity, bussgst,imagenum, bussrestlogo,bussupicode;
+    String filename = "userDetail.json";
+
+    FileOutputStream outputStream;
+
 
     String SHARED_PREF="sharedprefer";
     String TEXT="text";
     String SETTING="setting";
     int invoiceTemplateType;
     int itemtotal,cgst,sgst,gsttotal,invoicetype;
-    int valuetotal;
+    int valuetotal,invoiceno=1;
 
     sessionmanagement ses=new sessionmanagement(context);
     invoicehelper inhelp=new invoicehelper();
@@ -67,7 +78,7 @@ public class WebAppInterface<printhelp> {
 
     public WebAppInterface(Context c){
         context=c;
-        invoiceTemplateCheck();
+//        invoiceTemplateCheck();
     }
     public void userlogout()
     {
@@ -80,34 +91,99 @@ public class WebAppInterface<printhelp> {
             j1 = new JSONObject(String.valueOf(set));
             j2=new JSONObject(String.valueOf(user));
             invoicetype=j2.getInt("invoiceTemplateType");
+//
+//            JSONObject json = new JSONObject();
+//            json.put("id", "student");
+            String jValue=j1.toString();
+//            File file = new File(context.getFilesDir(),"userdetail.json");
+//            FileWriter fileWriter = new FileWriter(file);
+//            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+//            bufferedWriter.write(jValue);
+//            bufferedWriter.close();
 
-        } catch (JSONException e) {
+//            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+//            outputStream.write(jValue.getBytes());
+//            outputStream.close();
+//            File file = new File(context.getFilesDir(),"userDetail.json");
+
+//            FileReader fileReader = new FileReader(file);
+//            BufferedReader bufferedReader = new BufferedReader(fileReader);
+//            StringBuilder stringBuilder = new StringBuilder();
+//            String line = bufferedReader.readLine();
+//            JSONObject userd = new JSONObject(line);
+//            int id=userd.getInt("id");
+//            String name=userd.getString("name");
+//            String username=userd.getString("username");
+//            String token=userd.getString("token");
+//            System.out.println(userd);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+//        try {
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
        SharedPreferences sharedPreferences =context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if (invoicetype == 0){
+            invoiceno=1;
+        }
+        else{
+            invoiceno=invoicetype;
+        }
         editor.putString(TEXT, j1.toString());
-        editor.putInt(SETTING, invoicetype);
-         editor.apply();
-
+        editor.putInt(SETTING, invoiceno);
+       editor.commit();
+        editor.apply();
         System.out.println(data2.toString());
-
-
     }
-    public void invoiceTemplateCheck() {
+    public String getUserDetail(){
+        try {
+//            InputStream stream = context.getAssets().open("userdetail.json");
+//            int size = stream.available();
+//            byte[] buffer = new byte[size];
+//            stream.read(buffer);
+//            stream.close();
+//            String tContents = new String(buffer);
+//            System.out.println(tContents);
+//            JSONObject obj = new JSONObject(tContents);
+//            String url = obj.getString("token");
 
-            if (invoicetype == 0){
-                SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
-
-                invoicetype=mSharedPreference.getInt(SETTING,1);
-            }
-
+//            File file = new File(context.getFilesDir(),"userdetail.json");
+//            FileReader fileReader = new FileReader(file);
+//            BufferedReader bufferedReader = new BufferedReader(fileReader);
+//            StringBuilder stringBuilder = new StringBuilder();
+//            String line = bufferedReader.readLine();
+//            while (line != null){
+//                stringBuilder.append(line).append("\n");
+//                line = bufferedReader.readLine();
+//            }
+//            bufferedReader.close();
+//// This responce will have Json Format String
+//            String responce = stringBuilder.toString();
+            return "responce";
+        }
+        catch (Exception e){
+            return "";
+        }
     }
+
+//    public void invoiceTemplateCheck() {
+//         if (invoicetype == 0){
+//                SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+//                invoicetype=mSharedPreference.getInt(SETTING,1);
+//            }
+//    }
 
     @JavascriptInterface
 
     public void printtext(String cartdata, String orderdata, String billingtype) {
-
         int t= Integer.parseInt(billingtype);
         orderid = orderdata;
         browseBluetoothDevice();
@@ -124,8 +200,8 @@ public class WebAppInterface<printhelp> {
 
             printBluetoothbill();
         }
-
-    }
+//      String udetail=getUserDetail();
+     }
 
     private void jsonparse() {
         try{
@@ -389,7 +465,7 @@ public class WebAppInterface<printhelp> {
                         }
                     }
             )
-                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint (selectedDevice,str,inhelp,invoicetype));
+                    .execute(this.printhelp.getAsyncEscPosPrinterbillprint (selectedDevice,str,inhelp,invoiceno));
         }
     }
 

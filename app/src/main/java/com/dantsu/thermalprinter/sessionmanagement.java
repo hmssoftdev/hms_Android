@@ -12,19 +12,19 @@ import org.json.JSONObject;
 public class sessionmanagement  {
 
     Context context;
-    String SHARED_PREF="sharedprefer";
-    String TEXT="text";
+//    String SHARED_PREF="sharedprefer";
+//    String TEXT="text";
 
     public sessionmanagement(Context x){
    x=context;
     }
-    public void ShareSession(JSONObject s, JSONObject d){
-       SharedPreferences sharedPreferences =context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(TEXT, d.toString());
-        editor.apply();
-        Toast.makeText(context, s.toString(), Toast.LENGTH_SHORT).show();
-    }
+//    public void ShareSession(JSONObject s, JSONObject d){
+//       SharedPreferences sharedPreferences =context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putString(TEXT, d.toString());
+//        editor.apply();
+//        Toast.makeText(context, s.toString(), Toast.LENGTH_SHORT).show();
+//    }
 }
 
 class setting{     
@@ -36,4 +36,12 @@ class   userdata{
     public String username;
     public String token;
     public int adminid;
+
+//    public userdata(int Id,String Name,String Username,String Token,int Adminid){
+//        this.id=Id;
+//            this.name=Name;this.username=Username;this.token=Token;this.adminid=Adminid;
+//    }
+//public  String toJsonString(){
+//        return " ";
+//}
 }

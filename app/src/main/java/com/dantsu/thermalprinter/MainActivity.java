@@ -1,107 +1,71 @@
 package com.dantsu.thermalprinter;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.annotation.RequiresApi;import androidx.appcompat.app.AppCompatActivity;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.View;
+import android.os.Environment;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
-
-import com.dantsu.escposprinter.EscPosPrinter;
-import com.dantsu.escposprinter.connection.DeviceConnection;
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection;
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections;
-import com.dantsu.escposprinter.connection.tcp.TcpConnection;
-import com.dantsu.escposprinter.connection.usb.UsbConnection;
-import com.dantsu.escposprinter.connection.usb.UsbPrintersConnections;
-import com.dantsu.escposprinter.exceptions.EscPosBarcodeException;
-import com.dantsu.escposprinter.exceptions.EscPosConnectionException;
-import com.dantsu.escposprinter.exceptions.EscPosEncodingException;
-import com.dantsu.escposprinter.exceptions.EscPosParserException;
-import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
-import com.dantsu.thermalprinter.async.AsyncBluetoothEscPosPrint;
-import com.dantsu.thermalprinter.async.AsyncEscPosPrint;
-import com.dantsu.thermalprinter.async.AsyncEscPosPrinter;
-import com.dantsu.thermalprinter.async.AsyncTcpEscPosPrint;
-import com.dantsu.thermalprinter.async.AsyncUsbEscPosPrint;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
+
+import okio.BufferedSource;
+import okio.Okio;
 
 public class MainActivity extends AppCompatActivity {
 
     String SHARED_PREF="sharedprefer";
+    String SETTING="setting";
     String TEXT="text";
     String url ;
-
+    WebView webView;
     StringBuffer buffer;
+    Context context;
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        WebView webView  = findViewById(R.id.web);
+            webView  = findViewById(R.id.web);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-
-        url = GetURL();
+        context=getApplicationContext();
+        url = "https://hmsdev.fy5restaurantsoftware.com/#/login";
+//        getDetail();
         buffer =  new StringBuffer(url);
      SharedPreferences mSharedPreference=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
-
+//        SharedPreferences mSharedPreferencee=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
+//        int invy=mSharedPreferencee.getInt(SETTING, Integer.parseInt("0"));
         String value=mSharedPreference.getString(TEXT,"No Value");
-        SharedPreferences sharedpreferences = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putString("Username", TEXT);
-        editor.putString("Password", TEXT);
-        editor.putLong("ExpiredDate", System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2880));
-        editor.apply();
-        if (sharedpreferences.getLong("ExpiredDate", -1) > System.currentTimeMillis()) {
-            // read email and password
-        } else {
-            editor = sharedpreferences.edit();
-            editor.clear();
-            editor.apply();
-        }
-
+//        log.d("",value);
+        Toast.makeText(context, value, Toast.LENGTH_SHORT).show();
         webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 //        webView.addJavascriptInterface(new WebAppInterface(this), "jsinterface");
 
         if(value =="No Value"){
+            Toast.makeText(context, value, Toast.LENGTH_LONG).show();
             webView.loadUrl(url);
         }
         else{
+            Toast.makeText(context, value, Toast.LENGTH_LONG).show();
             String name = null,username = null,token = null;
             int usertype = 0,id = 0,adminid = 0;
             try {
@@ -124,11 +88,12 @@ public class MainActivity extends AppCompatActivity {
             buffer.append("&token="+URLEncoder.encode(String.valueOf(token)));
             buffer.append("&usertype="+URLEncoder.encode(String.valueOf(usertype)));
             buffer.append("&adminid="+URLEncoder.encode(String.valueOf(adminid)));
+            Toast.makeText(this,buffer.toString(), Toast.LENGTH_LONG).show();
             webView.loadUrl(buffer.toString());
         }
-    System.out.println(buffer.toString());
+//    System.out.println(buffer.toString());
 
-        webView.setWebViewClient(new MyWebViewClient());
+
 
 
     }
@@ -154,6 +119,9 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(tContents);
         JSONObject obj = new JSONObject(tContents);
         String url = obj.getString("URL");
+
+
+//        return responce;
         return url;
     }
     catch(Exception e){
@@ -163,4 +131,77 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void getDetail(){
+        try {
+//            FileInputStream fis = context.openFileInput("userDetail.json");
+//            InputStreamReader isr = new InputStreamReader(fis);
+//            BufferedReader bufferedReaders = new BufferedReader(isr);
+//            StringBuilder sb = new StringBuilder();
+//            String linee;
+//            while ((linee = bufferedReaders.readLine()) != null) {
+//                sb.append(linee);
+//            }
+//            File file;
+//            file = new File("/userDetail.json");
+//            final File f = new File(MainActivity.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+
+            String dirPath = context.getFilesDir().getAbsolutePath();
+            String filePath = dirPath + "/userDetail.json";
+            File audioFile = new File(filePath);
+
+            audioFile.getParentFile().mkdirs();
+
+            FileInputStream fis = new FileInputStream(audioFile);
+            InputStreamReader inputStreamReader =
+                    new InputStreamReader(fis, StandardCharsets.UTF_8);
+            StringBuilder stringBuilderss = new StringBuilder();
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+                String lineee = reader.readLine();
+                while (lineee != null) {
+                    stringBuilderss.append(lineee).append('\n');
+                    lineee = reader.readLine();
+                }
+
+
+            File file = context.getFileStreamPath("userDetail.json");
+//            File file = new File( "files/userDetail.json");
+            File stream =new File(context.getFilesDir().getAbsoluteFile(),"/userDetail.json");
+            System.out.println(context.getFilesDir().getAbsoluteFile());
+            System.out.println(stream);
+            FileReader fileReader = new FileReader(file.getAbsoluteFile());
+
+               BufferedReader bufferedReader = new BufferedReader(fileReader);
+               StringBuilder stringBuilder= new StringBuilder();
+                String line = bufferedReader.readLine();
+                JSONObject userd = new JSONObject(line);
+                int id=userd.getInt("id");
+                String name=userd.getString("name");
+                String username=userd.getString("username");
+                String token=userd.getString("token");
+                if (id == 1){
+                    webView.loadUrl(url);
+                }
+                else{
+                    int usertype= userd.getInt("userType");
+                    int adminid= userd.getInt("adminId");
+                    StringBuffer buffer=new StringBuffer(url);
+                    buffer.append("?id="+URLEncoder.encode(String.valueOf(id)));
+                    buffer.append("&name="+URLEncoder.encode(String.valueOf(name)));
+                    buffer.append("&username="+URLEncoder.encode(String.valueOf(username)));
+                    buffer.append("&token="+URLEncoder.encode(String.valueOf(token)));
+                    buffer.append("&usertype="+URLEncoder.encode(String.valueOf(usertype)));
+                    buffer.append("&adminid="+URLEncoder.encode(String.valueOf(adminid)));
+                    webView.loadUrl(buffer.toString());
+                }
+
+
+        }
+        catch (Exception e){
+//            webView.loadUrl(url);
+             e.printStackTrace();
+        }
+        webView.setWebViewClient(new MyWebViewClient());
+    }
 }
