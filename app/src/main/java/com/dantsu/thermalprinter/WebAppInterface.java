@@ -182,11 +182,11 @@ public class WebAppInterface<printhelp> {
 //    }
 
     @JavascriptInterface
-
     public void printtext(String cartdata, String orderdata, String billingtype) {
         int t= Integer.parseInt(billingtype);
         orderid = orderdata;
-        browseBluetoothDevice();
+//        browseBluetoothDevice();
+        selectedDevice=null;
         jsonparse();
         if(t==1)
         {
