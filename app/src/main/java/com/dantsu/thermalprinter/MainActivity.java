@@ -1,9 +1,15 @@
 package com.dantsu.thermalprinter;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,13 +31,56 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okio.BufferedSource;
 import okio.Okio;
 
 public class MainActivity extends AppCompatActivity {
+    ActivityResultLauncher<String[]> mPermissionResultLauncher;
+    private boolean isLocationPermissonGranted = false;
+    private boolean isCameraPermissonGranted = false;
+    private boolean isContactPermissonGranted = false;
+    private boolean isMediaPermisson = false;
 
+
+    private void requestPermisson() {
+        isLocationPermissonGranted = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED;
+        isCameraPermissonGranted = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED;
+        isContactPermissonGranted = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_CONTACTS
+        ) == PackageManager.PERMISSION_GRANTED;
+        isMediaPermisson = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED;
+        List<String> permissionrequest = new ArrayList<String>();
+        if (!isLocationPermissonGranted) {
+            permissionrequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (!isCameraPermissonGranted) {
+            permissionrequest.add(Manifest.permission.CAMERA);
+        }
+        if (!isContactPermissonGranted) {
+            permissionrequest.add(Manifest.permission.READ_CONTACTS);
+        }
+        if (!isMediaPermisson) {
+            permissionrequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!permissionrequest.isEmpty()) {
+            mPermissionResultLauncher.launch(permissionrequest.toArray(new String[0]));
+        }
+    }
     String SHARED_PREF="sharedprefer";
     String SETTING="setting";
     String TEXT="text";
@@ -50,6 +99,25 @@ public class MainActivity extends AppCompatActivity {
         context=getApplicationContext();
         url = "https://hmsdev.fy5restaurantsoftware.com/#/login";
 //        getDetail();
+        mPermissionResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+            @Override
+            public void onActivityResult(Map<String, Boolean> result) {
+                if (result.get(Manifest.permission.CAMERA) != null) {
+                    isLocationPermissonGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+                }
+                if (result.get(Manifest.permission.ACCESS_FINE_LOCATION) != null) {
+                    isCameraPermissonGranted  = result.get(Manifest.permission.CAMERA);
+                }
+                if (result.get(Manifest.permission.READ_CONTACTS) != null) {
+                    isContactPermissonGranted= result.get(Manifest.permission.READ_CONTACTS);
+                }
+                if (result.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) != null) {
+                    isMediaPermisson  = result.get(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }
+            }
+
+        });
+        requestPermisson();
         buffer =  new StringBuffer(url);
      SharedPreferences mSharedPreference=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
 //        SharedPreferences mSharedPreferencee=getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
