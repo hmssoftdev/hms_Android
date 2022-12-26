@@ -24,24 +24,25 @@ public class Printingmethodhelper {
     DeviceConnection printerConnection;
     StringBuilder str;
     invoicehelper inhelp;
-    String SHARED_PREF="sharedprefer";
-    String SETTING="setting";
-    Bitmap bitmap1,bitmap2;
+    String SHARED_PREF = "sharedprefer";
+    String SETTING = "setting";
+    Bitmap bitmap1, bitmap2;
 
-    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint(DeviceConnection printerConnection, StringBuilder str, invoicehelper inhelp,int i) {
-try{
+    //    SharedPreferences mSharedPreference=context.getSharedPreferences(SHARED_PREF,context.MODE_PRIVATE);
+//    int i=mSharedPreference.getInt(SETTING,1);
+    public AsyncEscPosPrinter getAsyncEscPosPrinterbillprint(DeviceConnection printerConnection, StringBuilder str, invoicehelper inhelp, int i) {
+        try {
 
-    URL connect=new URL(inhelp.busslogo);
-    URL connect2=new URL(inhelp.bussupi);
-    InputStream in=connect.openStream();
-    InputStream in2= connect2.openStream();
-    bitmap1= BitmapFactory.decodeStream(in);
-    bitmap2= BitmapFactory.decodeStream(in2);
+            URL connect = new URL(inhelp.busslogo);
+            URL connect2 = new URL(inhelp.bussupi);
+            InputStream in = connect.openStream();
+            InputStream in2 = connect2.openStream();
+            bitmap1 = BitmapFactory.decodeStream(in);
+            bitmap2 = BitmapFactory.decodeStream(in2);
 
-}
-catch (Exception e){
+        } catch (Exception e) {
 
-}
+        }
 
 
         SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
@@ -50,104 +51,104 @@ catch (Exception e){
         Format f = new SimpleDateFormat("HH:mm");
         AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 220, 75, 47);
         String s = null;
-       switch (i){
-           case 1:
-              s= "[C]<u><font size='big'>" + inhelp.bussname + "</font></u>\n" +
-                       "[C]<b>"+inhelp.bussadd + "\n" +
-                       "[C]<b>Tel:" + inhelp.bussphone + "\n" +
-                       "[L]<b>Bill:" + inhelp.invoicenum + "" + "[R]" + "Date:" + "[L]" + format.format(new Date()) + "\n" +
-                       "[L]<b>Mode:" + inhelp.DeliveryMode + "<u type='double'>" + " [R]Time:" + "[L]" + f.format(new Date()) + "\n" +
+        switch (i) {
+            case 1:
+                s = "[C]<u><font size='big'>" + inhelp.bussname + "</font></u>\n" +
+                        "[C]<b>" + inhelp.bussadd + "\n" +
+                        "[C]<b>Tel:" + inhelp.bussphone + "\n" +
+                        "[L]<b>Bill:" + inhelp.invoicenum + "" + "[R]" + "Date:" + "[L]" + format.format(new Date()) + "\n" +
+                        "[L]<b>Mode:" + inhelp.DeliveryMode + "<u type='double'>" + " [R]Time:" + "[L]" + f.format(new Date()) + "\n" +
 
-                       "-----------------------------------------\n" +
-                       "[C]<b>Product [R]Quantity [C]Rate [L]Value </b>\n" +
-                       "-----------------------------------------\n" +
-                       "[L]" + str +
-                       "----------------------------------------\n" +
-                       "[L]<b >Total Item" + "[R]" + inhelp.itemtotal + "[C]" + "Total" + "[L]" + inhelp.valuetotal + "</b>\n" +
-                       "----------------------------------------\n" +
-                       "[C]<u>Thank You Visit Again</u>!!!!" ;
-               break;
-               case 2:
-               s= "[C]<b>" + "Invoice" + "</u>\n" +
-                       "[C]<img>"+ PrinterTextParserImg.bitmapToHexadecimalString(printer,bitmap1)+"</img>\n" +
-                       "[L]<b>"+"Bill:" + inhelp.invoicenum +"\n"+
-                       "[L]<b>" + "Date:" + format.format(new Date()) +"Time:"+f.format(new Date())+"\n"+
-                       "[L]<b>Delivery Mode:" + inhelp.DeliveryMode + " <u type='double'>\n" +
-                       "[L]<b>Name: " + inhelp.bussname + "</font></u>\n" +
-                       "[L]<b>Address: " + inhelp.bussadd +"\n" +
-                       "[L]<b>city: " + inhelp.busscity + "\n" + "[L]<b>state: " + inhelp.bussstate + "\n" +
-                       "[L]<b>GSTIN NO: " + inhelp.bussgst + "\n" +
-                       "-----------------------------------------\n" +
-                       "[C]<b>Product [R]Quantity [C]Rate [L]Value </b>\n" +
-                       "-----------------------------------------\n" +
-                       "[L]" + str +
-                       "----------------------------------------\n" +
-                       "[L]<b >Total Item" + "[R]" + inhelp.itemtotal + "[C]" + "Total" + "[L]" + inhelp.valuetotal + "</b>\n" +
-                       "----------------------------------------\n" +
-                       "                        [R]<b>" + "CGST %:" + "[L]" + "[L]" + inhelp.cgst + "\n" +
-                       "                        [R]<b>" + "SGST %:" + "[L]" + "[L]" + inhelp.sgst + "\n" +
-                       "----------------------------------------\n" +
-                       "                 [R]<b>" + "Grand Total :" + "[R]" + "[L]" + inhelp.gsttotal + "  \n" +
-                       "----------------------------------------\n" +
-                       "[C]<u>Thank You Visit Again</u>!!!!";
-               break;
-               case 3:
-               s="[C]<u><font size='big'>" + inhelp.bussname + "</font></u>\n" +
-               "[C]<b>"+ inhelp.bussadd + "\n" +
+                        "-----------------------------------------\n" +
+                        "[C]<b>Product [R]Quantity [C]Rate [L]Value </b>\n" +
+                        "-----------------------------------------\n" +
+                        "[L]" + str +
+                        "----------------------------------------\n" +
+                        "[L]<b >Total Item" + "[R]" + inhelp.itemtotal + "[C]" + "Total" + "[L]" + inhelp.valuetotal + "</b>\n" +
+                        "----------------------------------------\n" +
+                        "[C]<u>Thank You Visit Again</u>!!!!";
+                break;
+            case 2:
+                s = "[C]<b>" + "Invoice" + "</u>\n" +
+                        "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, bitmap1) + "</img>\n" +
+                        "[L]<b>" + "Bill:" + inhelp.invoicenum + "\n" +
+                        "[L]<b>" + "Date:" + format.format(new Date()) + "Time:" + f.format(new Date()) + "\n" +
+                        "[L]<b>Delivery Mode:" + inhelp.DeliveryMode + " <u type='double'>\n" +
+                        "[L]<b>Name: " + inhelp.bussname + "</font></u>\n" +
+                        "[L]<b>Address: " + inhelp.bussadd + "\n" +
+                        "[L]<b>city: " + inhelp.busscity + "\n" + "[L]<b>state: " + inhelp.bussstate + "\n" +
+                        "[L]<b>GSTIN NO: " + inhelp.bussgst + "\n" +
+                        "-----------------------------------------\n" +
+                        "[C]<b>Product [R]Quantity [C]Rate [L]Value </b>\n" +
+                        "-----------------------------------------\n" +
+                        "[L]" + str +
+                        "----------------------------------------\n" +
+                        "[L]<b >Total Item" + "[R]" + inhelp.itemtotal + "[C]" + "Total" + "[L]" + inhelp.valuetotal + "</b>\n" +
+                        "----------------------------------------\n" +
+                        "                        [R]<b>" + "CGST %:" + "[L]" + "[L]" + inhelp.cgst + "\n" +
+                        "                        [R]<b>" + "SGST %:" + "[L]" + "[L]" + inhelp.sgst + "\n" +
+                        "----------------------------------------\n" +
+                        "                 [R]<b>" + "Grand Total :" + "[R]" + "[L]" + inhelp.gsttotal + "  \n" +
+                        "----------------------------------------\n" +
+                        "[C]<u>Thank You Visit Again</u>!!!!";
+                break;
+            case 3:
+                s = "[C]<u><font size='big'>" + inhelp.bussname + "</font></u>\n" +
+                        "[C]<b>" + inhelp.bussadd + "\n" +
 
-                       "[C]<b>Tel:" + inhelp.bussphone + "\n" +
-                       "-----------------------------------------\n" +
-                       "[L]Date:" + format.format(new Date())+"@"+f.format(new Date())+"[L]Bill:" + inhelp.invoicenum + "\n"+
+                        "[C]<b>Tel:" + inhelp.bussphone + "\n" +
+                        "-----------------------------------------\n" +
+                        "[L]Date:" + format.format(new Date()) + "@" + f.format(new Date()) + "[L]Bill:" + inhelp.invoicenum + "\n" +
 
-                       "-----------------------------------------\n" +
-                       "[C]<b>Product [R]Quantity [C]Rate [L]Value </b>\n" +
-                       "-----------------------------------------\n" +
-                       "[L]" + str +
-                       "----------------------------------------\n" +
-                       "[L]<b >Total Item" + "[R]" + inhelp.itemtotal + "[C]" + "Total" + "[L]" + inhelp.valuetotal + "</b>\n" +
-                       "----------------------------------------\n" +
-                       "[C]<u>Thank You Visit Again</u>!!!!" ;
-               break;
-               case 4:
-               s= "[C]<b>Name: "+inhelp.bussname+"</font></u>\n" +
-                       "[C]<b>Bill:"+inhelp.invoicenum+"\n"+
-                       "[C]<b>" + "Date:" + format.format(new Date()) +"[C]Time:"+f.format(new Date())+"\n"+
-                       "-----------------------------------------\n" +
-                       "[C]<b>Product [C]Quantity [C]Rate [L]Value </b>\n"+
-                       "-----------------------------------------\n" +
-                       "[L]"+str+
-                       "----------------------------------------\n" +
-                       "[L]<b >Total Item"+"[R]"+inhelp.itemtotal+"[C]"+"Total"+"[L]"+inhelp.valuetotal+"</b>\n"+
-                       "----------------------------------------\n" +
-                           "                    [R]<b>"+"CGST %:"+"[L]"+"[L]"+inhelp.cgst+"\n"+
-                           "                    [R]<b>"+"SGST %:"+"[L]"+"[L]"+inhelp.sgst+"\n"+
-                       "----------------------------------------\n" +
-                           "            [R]<b>"+"Grand Total :"+"[R]"+"[L]"+inhelp.gsttotal+"  \n"+
-                       "----------------------------------------\n" +
-                        "[C]<u>Thank You Visit Again</u>!!!!" ;
-               break;
-               case 5:
-               s=   "[C]<img>"+ PrinterTextParserImg.bitmapToHexadecimalString(printer,bitmap1)+"</img>\n" +
-                       "[C]<b>Name: "+inhelp.bussname+"</font></u>\n" +
-                       "[C]<b>"+ inhelp.bussadd +"\n"+
-                       "[C]Tel:"+inhelp.bussphone+"\n"+
-                        "[C]<b>"+"Date:"+simpleformat.format(new Date())+"\n"+
-                       "[C]<b>Mode:" + inhelp.DeliveryMode + " <u type='double'>\n" +
-                       "-----------------------------------------\n" +
-                       "[C]<b>Product [C]Quantity [C]Rate [L]Value </b>\n"+
-                       "---------------------------------------\n" +
-                       "[L]"+str+
-                       "----------------------------------------\n" +
-                       "[L]<b >Total Item"+"[R]"+inhelp.itemtotal+"[C]"+"Total"+"[L]"+inhelp.valuetotal+"</b>\n"+
-                       "----------------------------------------\n" +
-                       "[C]<b><u>!!Thank You, Visit Again</u>!!\n"+
-                       "[C]<b>Scan & pay through any UPI app\n"+
-                       "[C]<img>"+ PrinterTextParserImg.bitmapToHexadecimalString(printer,bitmap2)+"</img>\n" +
-                       "[L]<b>Powered by FY5 Software Privated Limited\n";
+                        "-----------------------------------------\n" +
+                        "[C]<b>Product [R]Quantity [C]Rate [L]Value </b>\n" +
+                        "-----------------------------------------\n" +
+                        "[L]" + str +
+                        "----------------------------------------\n" +
+                        "[L]<b >Total Item" + "[R]" + inhelp.itemtotal + "[C]" + "Total" + "[L]" + inhelp.valuetotal + "</b>\n" +
+                        "----------------------------------------\n" +
+                        "[C]<u>Thank You Visit Again</u>!!!!";
+                break;
+            case 4:
+                s = "[C]<b>Name: " + inhelp.bussname + "</font></u>\n" +
+                        "[C]<b>Bill:" + inhelp.invoicenum + "\n" +
+                        "[C]<b>" + "Date:" + format.format(new Date()) + "[C]Time:" + f.format(new Date()) + "\n" +
+                        "-----------------------------------------\n" +
+                        "[C]<b>Product [C]Quantity [C]Rate [L]Value </b>\n" +
+                        "-----------------------------------------\n" +
+                        "[L]" + str +
+                        "----------------------------------------\n" +
+                        "[L]<b >Total Item" + "[R]" + inhelp.itemtotal + "[C]" + "Total" + "[L]" + inhelp.valuetotal + "</b>\n" +
+                        "----------------------------------------\n" +
+                        "                    [R]<b>" + "CGST %:" + "[L]" + "[L]" + inhelp.cgst + "\n" +
+                        "                    [R]<b>" + "SGST %:" + "[L]" + "[L]" + inhelp.sgst + "\n" +
+                        "----------------------------------------\n" +
+                        "            [R]<b>" + "Grand Total :" + "[R]" + "[L]" + inhelp.gsttotal + "  \n" +
+                        "----------------------------------------\n" +
+                        "[C]<u>Thank You Visit Again</u>!!!!";
+                break;
+            case 5:
+                s = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, bitmap1) + "</img>\n" +
+                        "[C]<b>Name: " + inhelp.bussname + "</font></u>\n" +
+                        "[C]<b>" + inhelp.bussadd + "\n" +
+                        "[C]Tel:" + inhelp.bussphone + "\n" +
+                        "[C]<b>" + "Date:" + simpleformat.format(new Date()) + "\n" +
+                        "[C]<b>Mode:" + inhelp.DeliveryMode + " <u type='double'>\n" +
+                        "-----------------------------------------\n" +
+                        "[C]<b>Product [C]Quantity [C]Rate [L]Value </b>\n" +
+                        "---------------------------------------\n" +
+                        "[L]" + str +
+                        "----------------------------------------\n" +
+                        "[L]<b >Total Item" + "[R]" + inhelp.itemtotal + "[C]" + "Total" + "[L]" + inhelp.valuetotal + "</b>\n" +
+                        "----------------------------------------\n" +
+                        "[C]<b><u>!!Thank You, Visit Again</u>!!\n" +
+                        "[C]<b>Scan & pay through any UPI app\n" +
+                        "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, bitmap2) + "</img>\n" +
+                        "[L]<b>Powered by FY5 Software Privated Limited\n";
 
-               break;
+                break;
 
-       }
+        }
         return printer.addTextToPrint(s);
     }
 
@@ -221,7 +222,7 @@ catch (Exception e){
         AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 203, 70, 45);
 
         return printer.addTextToPrint(
-                        "[C]<b>Invoice No:"+inhelp.invoicenum+"\n"+
+                "[C]<b>Invoice No:"+inhelp.invoicenum+"\n"+
                         "[C]<b>Name: "+inhelp.bussname+"</font></u>\n" +
                         "[C]<b>"+inhelp.bussadd +"\n"+
                         "[C]Tel:"+inhelp.bussphone+"\n"+

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FY5 Accountability</string>
+    <string name="no_Internet">webView</string>
+
 </resources>

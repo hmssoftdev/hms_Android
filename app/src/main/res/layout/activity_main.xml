@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/reload"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <WebView
         android:id="@+id/web"
         android:layout_width="match_parent"
@@ -100,5 +107,6 @@
 
 
     </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
