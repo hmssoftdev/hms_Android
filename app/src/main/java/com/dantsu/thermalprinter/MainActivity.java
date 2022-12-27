@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
                 String lineee = reader.readLine();
                 while (lineee != null) {
                     stringBuilderss.append(lineee).append('\n');
-                    lineee = reader.readLine();
+                    lineee = reader. readLine();
                 }
 
 
